@@ -15,7 +15,7 @@ type ProductController struct {
 }
 
 func ProvideProductController(p Services.ProductService) ProductController {
-	return ProductController{Services.ProductService: p}
+	return ProductController{ProductService: p}
 }
 
 func (p *ProductController) FindAll(ctx *gin.Context) {
@@ -63,13 +63,13 @@ func (p *ProductController) Update(ctx *gin.Context) {
 
 	id, _ :=  strconv.Atoi(ctx.Param("id"))
 	product := p.ProductService.FindByID(uint(id))
-	if product == (Product{}) {
+	if product.ProductName == "" {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 
 	product.ProductName = productDTO.ProductName
-	product.ProductCategoryId = productDTO.ProductCategoryId
+	product.ProductCategoryID = productDTO.ProductCategoryID
 	p.ProductService.Save(product)
 
 	ctx.Status(http.StatusOK)
@@ -78,7 +78,7 @@ func (p *ProductController) Update(ctx *gin.Context) {
 func (p *ProductController) Delete(ctx *gin.Context) {
 	id, _ :=  strconv.Atoi(ctx.Param("id"))
 	product := p.ProductService.FindByID(uint(id))
-	if product == (Product{}) {
+	if product.ProductName == "" {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}

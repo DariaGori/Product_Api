@@ -5,9 +5,11 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func SetupRouter(r *gin.Engine, db *gorm.DB) *gin.Engine {
+func SetupRouter(db *gorm.DB) *gin.Engine {
 	productController := InitProductController(db)
 	productCategoryController := InitProductCategoryController(db)
+
+	r := gin.Default()
 
 	products := r.Group("/products")
 	{

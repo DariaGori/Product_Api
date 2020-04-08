@@ -15,9 +15,9 @@ import (
 
 	defer db.Close()
   
+	db.DropTableIfExists(&Product{}, &ProductCategory{})
 	// Generate migrations
-	db.AutoMigrate(&Product{})
-	db.AutoMigrate(&ProductCategory{})
+	db.AutoMigrate(&Product{}, &ProductCategory{})
   
 	return db
   }

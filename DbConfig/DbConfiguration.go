@@ -2,7 +2,6 @@ package DbConfig
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 )
 
 // Database configuration
@@ -32,6 +31,6 @@ func DbURL(dbConfig *DbConfig) string {
 		dbConfig.Password,
 		dbConfig.Host,
 		dbConfig.Port,
-		dbConfig.DBName
+		dbConfig.DBName,
 	)
 }

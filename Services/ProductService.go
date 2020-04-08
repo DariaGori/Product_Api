@@ -10,7 +10,7 @@ type ProductService struct {
 }
 
 func ProvideProductService(p Repositories.ProductRepository) ProductService {
-	return ProductService{Repositories.ProductRepository: p}
+	return ProductService{ProductRepository: p}
 }
 
 func (p *ProductService) FindAll() []Models.Product {

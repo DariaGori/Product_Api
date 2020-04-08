@@ -10,7 +10,7 @@ type ProductCategoryService struct {
 }
 
 func ProvideProductCategoryService(p Repositories.ProductCategoryRepository) ProductCategoryService {
-	return ProductCategoryService{Repositories.ProductCategoryRepository: p}
+	return ProductCategoryService{ProductCategoryRepository: p}
 }
 
 func (p *ProductCategoryService) FindAll() []Models.ProductCategory {
@@ -22,7 +22,7 @@ func (p *ProductCategoryService) FindByID(id uint) Models.ProductCategory {
 }
 
 func (p *ProductCategoryService) Save(productCategory Models.ProductCategory) Models.ProductCategory {
-	p.ProductRepository.Save(productCategory)
+	p.ProductCategoryRepository.Save(productCategory)
 
 	return productCategory
 }

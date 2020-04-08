@@ -1,6 +1,6 @@
 package DTOs
 
 type ProductCategoryDTO struct {
-	ID uint 	               `json:"id, string, omitempty"`
-	ProductCategoryName string `json:"product_category_name"`
+	Id uint 	               `json:"id, omitempty" gorm:"primary_key";"AUTO_INCREMENT"`
+	ProductCategoryName string `json:"product_category_name" gorm:"unique; not null"`
 }

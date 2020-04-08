@@ -10,7 +10,7 @@ func ToProduct(productDTO DTOs.ProductDTO) Models.Product {
 }
 
 func ToProductDTO(product Models.Product) DTOs.ProductDTO {
-	return ProductDTO{Id: product.Id, ProductName: product.ProductName, ProductCategoryID: product.ProductCategoryID}
+	return DTOs.ProductDTO{Id: product.ID, ProductName: product.ProductName, ProductCategoryID: product.ProductCategoryID}
 }
 
 func ToProductDTOs(products []Models.Product) []DTOs.ProductDTO {

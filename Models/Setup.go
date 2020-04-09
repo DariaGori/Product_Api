@@ -13,7 +13,7 @@ import (
 	  panic("Failed to connect to database!")
 	}
 
-	defer db.Close()
+	//defer db.Close()
   
 	db.DropTableIfExists(&Product{}, &ProductCategory{})
 	// Generate migrations

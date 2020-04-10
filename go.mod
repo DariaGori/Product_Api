@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	cloud.google.com/go v0.37.4 // indirect
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.2
 	github.com/google/wire v0.4.0
 	github.com/jinzhu/gorm v1.9.12

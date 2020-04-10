@@ -10,7 +10,7 @@ func main() {
 
 	r := SetupRouter(db)
 
-	err := r.Run()
+	err := r.Run(":3000")
 	if err != nil {
 		panic(err)
 	}

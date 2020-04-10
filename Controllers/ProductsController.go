@@ -25,7 +25,7 @@ func (p *ProductController) FindAll(ctx *gin.Context) {
 }
 
 func (p *ProductController) FindByCategoryId(ctx *gin.Context) {
-	categoryId, _ :=  strconv.Atoi(ctx.Param("product_category_id"))
+	categoryId, _ :=  strconv.Atoi(ctx.Param("productCategoryId"))
 	products := p.ProductService.FindByCategoryId(uint(categoryId))
 	
 	ctx.JSON(http.StatusOK, gin.H{"products": Mappers.ToProductDTOs(products)})

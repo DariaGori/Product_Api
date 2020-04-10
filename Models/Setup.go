@@ -10,7 +10,7 @@ import (
 	db, err := gorm.Open("mysql", DbConfig.DbURL(DbConfig.BuildDbConfig()))
   
 	if err != nil {
-	  panic("Failed to connect to database!")
+		log.Fatal(err)
 	}
 
 	//defer db.Close()

@@ -23,7 +23,7 @@ func (p *ProductRepository) FindAll() []Models.Product {
 
 func (p *ProductRepository) FindByCategoryId(productCategoryId uint) []Models.Product {
 	var products []Models.Product
-	p.DB.Find(&products).Where("productCategoryId = ?", productCategoryId)
+	p.DB.Where("product_category_id = ?", productCategoryId).Find(&products)
 
 	return products
 }

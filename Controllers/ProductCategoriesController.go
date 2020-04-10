@@ -40,6 +40,11 @@ func (p *ProductCategoryController) Create(ctx *gin.Context) {
 		return
 	}
 
+	if (productCategoryDTO.ProductCategoryName == "") {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
 	createdProductCategory := p.ProductCategoryService.Save(Mappers.ToProductCategory(productCategoryDTO))
 
 	ctx.JSON(http.StatusOK, gin.H{"productCategory": Mappers.ToProductCategoryDTO(createdProductCategory)})

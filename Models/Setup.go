@@ -1,6 +1,7 @@
 package Models
 
 import (
+	"log"
 	"github.com/DariaGori/Product_Api/DbConfig"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -10,7 +11,7 @@ import (
 	db, err := gorm.Open("mysql", DbConfig.DbURL(DbConfig.BuildDbConfig()))
   
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	//defer db.Close()

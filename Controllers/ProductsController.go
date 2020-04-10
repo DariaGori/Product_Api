@@ -47,6 +47,11 @@ func (p *ProductController) Create(ctx *gin.Context) {
 		return
 	}
 
+	if (productDTO.ProductName == "") {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
 	createdProduct := p.ProductService.Save(Mappers.ToProduct(productDTO))
 
 	ctx.JSON(http.StatusOK, gin.H{"product": Mappers.ToProductDTO(createdProduct)})

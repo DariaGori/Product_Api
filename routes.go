@@ -12,11 +12,17 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	r := gin.Default()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "HEAD", "DELETE"}
-
-	r.Use(cors.New(config))
+	r.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:3000"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "HEAD", "DELETE"},
+        AllowHeaders:     []string{"Content-Type, Content-Length, Origin"},
+        ExposeHeaders:    []string{"Content-Type, Content-Length"},
+        AllowCredentials: true,
+        AllowOriginFunc: func(origin string) bool {
+            return origin == "http://localhost:8080"
+        },
+        MaxAge: 12 * time.Hour,
+    }))
 
 	products := r.Group("/products")
 	{
@@ -31,6 +37,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		productCategories.GET("index", productCategoryController.FindAll)
 		productCategories.POST("create", productCategoryController.Create)
 		productCategories.GET("details/:id", productCategoryController.FindByID)
+		productCategories.OPTIONS("details/:id", PreFlight)
 		productCategories.PUT("edit/:id", productCategoryController.Update)
 		productCategories.DELETE("delete/:id", productCategoryController.Delete)
 	}

@@ -32,27 +32,27 @@ func (p *ProductCategoryController) FindByID(ctx *gin.Context) {
 }
 
 func (p *ProductCategoryController) Create(ctx *gin.Context) {
-	var productCategoryDTO DTOs.ProductCategoryDTO
-	err := ctx.BindJSON(&productCategoryDTO)
+	var productCategoryCreateEditDTO DTOs.ProductCategoryCreateEditDTO
+	err := ctx.BindJSON(&productCategoryCreateEditDTO)
 	if err != nil {
 		log.Fatalln(err)
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 
-	if (productCategoryDTO.ProductCategoryName == "") {
+	if (productCategoryCreateEditDTO.ProductCategoryName == "") {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 
-	createdProductCategory := p.ProductCategoryService.Save(Mappers.ToProductCategory(productCategoryDTO))
+	createdProductCategory := p.ProductCategoryService.Save(Mappers.ToProductCategoryFromCreateEditDTO(productCategoryCreateEditDTO))
 
-	ctx.JSON(http.StatusOK, gin.H{"productCategory": Mappers.ToProductCategoryDTO(createdProductCategory)})
+	ctx.JSON(http.StatusOK, gin.H{"productCategory": Mappers.ToProductCategoryCreateEditDTO(createdProductCategory)})
 }
 
 func (p *ProductCategoryController) Update(ctx *gin.Context) {
-	var productCategoryDTO DTOs.ProductCategoryDTO
-	err := ctx.BindJSON(&productCategoryDTO)
+	var productCategoryCreateEditDTO DTOs.ProductCategoryCreateEditDTO
+	err := ctx.BindJSON(&productCategoryCreateEditDTO)
 	if err != nil {
 		log.Fatalln(err)
 		ctx.Status(http.StatusBadRequest)
@@ -66,7 +66,7 @@ func (p *ProductCategoryController) Update(ctx *gin.Context) {
 		return
 	}
 
-	productCategory.ProductCategoryName = productCategoryDTO.ProductCategoryName
+	productCategory.ProductCategoryName = productCategoryCreateEditDTO.ProductCategoryName
 	p.ProductCategoryService.Save(productCategory)
 
 	ctx.Status(http.StatusOK)

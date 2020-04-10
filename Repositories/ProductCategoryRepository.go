@@ -16,7 +16,7 @@ func ProvideProductCategoryRepostiory(DB *gorm.DB) ProductCategoryRepository {
 
 func (p *ProductCategoryRepository) FindAll() []Models.ProductCategory {
 	var productCategories []Models.ProductCategory
-	p.DB.Find(&productCategories)
+	p.DB.Find(&productCategories).Joins("left join products on products.product_category_id = product_categories.id").Rows()
 
 	return productCategories
 }

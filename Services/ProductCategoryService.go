@@ -30,3 +30,7 @@ func (p *ProductCategoryService) Save(productCategory Models.ProductCategory) Mo
 func (p *ProductCategoryService) Delete(productCategory Models.ProductCategory) {
 	p.ProductCategoryRepository.Delete(productCategory)
 }
+
+func (p *ProductCategoryService) Exists(productCategory Models.ProductCategory) bool {
+	return p.ProductCategoryRepository.Exists(productCategory)
+}

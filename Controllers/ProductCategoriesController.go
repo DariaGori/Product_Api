@@ -40,14 +40,20 @@ func (p *ProductCategoryController) Create(ctx *gin.Context) {
 		return
 	}
 
+	// Check if category with this name exists
+	if p.ProductCategoryService.Exists(Mappers.ToProductCategoryFromCreateEditDTO(productCategoryCreateEditDTO)) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category already exists": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
+		return
+	}
+
 	if (productCategoryCreateEditDTO.ProductCategoryName == "") {
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category name is empty": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
 		return
 	}
 
 	createdProductCategory := p.ProductCategoryService.Save(Mappers.ToProductCategoryFromCreateEditDTO(productCategoryCreateEditDTO))
 
-	ctx.JSON(http.StatusOK, gin.H{"productCategory": Mappers.ToProductCategoryCreateEditDTO(createdProductCategory)})
+	ctx.JSON(http.StatusOK, gin.H{"Category created": createdProductCategory.ProductCategoryName})
 }
 
 func (p *ProductCategoryController) Update(ctx *gin.Context) {
@@ -59,10 +65,16 @@ func (p *ProductCategoryController) Update(ctx *gin.Context) {
 		return
 	}
 
+	// Check if category with this name exists
+	if p.ProductCategoryService.Exists(Mappers.ToProductCategoryFromCreateEditDTO(productCategoryCreateEditDTO)) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category already exists": productCategoryCreateEditDTO.ProductCategoryName, "Updated": false})
+		return
+	}
+
 	id, _ :=  strconv.Atoi(ctx.Param("id"))
 	productCategory := p.ProductCategoryService.FindByID(uint(id))
 	if productCategory.ProductCategoryName == "" {
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category name is empty": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
 		return
 	}
 
@@ -76,7 +88,7 @@ func (p *ProductCategoryController) Delete(ctx *gin.Context) {
 	id, _ :=  strconv.Atoi(ctx.Param("id"))
 	productCategory := p.ProductCategoryService.FindByID(uint(id))
 	if productCategory.ProductCategoryName == "" {
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category id doesn't exist": id, "Deleted": false})
 		return
 	}
 

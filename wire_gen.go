@@ -21,13 +21,17 @@ import (
 func InitProductController(db *gorm.DB) Controllers.ProductController {
 	productRepository := Repositories.ProvideProductRepostiory(db)
 	productService := Services.ProvideProductService(productRepository)
-	productController := Controllers.ProvideProductController(productService)
+	productCategoryRepository := Repositories.ProvideProductCategoryRepostiory(db)
+	productCategoryService := Services.ProvideProductCategoryService(productCategoryRepository)
+	productController := Controllers.ProvideProductController(productService, productCategoryService)
 	return productController
 }
 
 func InitProductCategoryController(db *gorm.DB) Controllers.ProductCategoryController {
 	productCategoryRepository := Repositories.ProvideProductCategoryRepostiory(db)
 	productCategoryService := Services.ProvideProductCategoryService(productCategoryRepository)
-	productCategoryController := Controllers.ProvideProductCategoryController(productCategoryService)
+	productRepository := Repositories.ProvideProductRepostiory(db)
+	productService := Services.ProvideProductService(productRepository)
+	productCategoryController := Controllers.ProvideProductCategoryController(productCategoryService, productService)
 	return productCategoryController
 }

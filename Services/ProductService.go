@@ -21,7 +21,7 @@ func (p *ProductService) FindByCategoryId(categoryId uint) []Models.Product {
 	return p.ProductRepository.FindByCategoryId(categoryId)
 }
 
-func (p *ProductService) FindByID(id uint) Models.Product {
+func (p *ProductService) FindByID(id uint) (Models.Product, error) {
 	return p.ProductRepository.FindByID(id)
 }
 
@@ -33,4 +33,8 @@ func (p *ProductService) Save(product Models.Product) Models.Product {
 
 func (p *ProductService) Delete(product Models.Product) {
 	p.ProductRepository.Delete(product)
+}
+
+func (p *ProductService) Exists(product Models.Product) bool {
+	return p.ProductRepository.Exists(product)
 }

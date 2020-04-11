@@ -1,42 +1,54 @@
 package Controllers
 
 import (
-	"github.com/DariaGori/Product_Api/Services"
+	iv "github.com/DariaGori/Product_Api/Validation"
+	s "github.com/DariaGori/Product_Api/Services"
 	"github.com/DariaGori/Product_Api/Mappers"
 	"github.com/DariaGori/Product_Api/DTOs"
 	"strconv"
-	"log"
 	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
 type ProductCategoryController struct {
-	ProductCategoryService Services.ProductCategoryService
+	ProductCategoryService s.ProductCategoryService
+	ProductService s.ProductService
 }
 
-func ProvideProductCategoryController(p Services.ProductCategoryService) ProductCategoryController {
-	return ProductCategoryController{ProductCategoryService: p}
+func ProvideProductCategoryController(p s.ProductCategoryService, ps s.ProductService) ProductCategoryController {
+	return ProductCategoryController{ProductCategoryService: p, ProductService: ps} 
 }
 
+// GET: ./
 func (p *ProductCategoryController) FindAll(ctx *gin.Context) {
 	productCategories := p.ProductCategoryService.FindAll()
 
 	ctx.JSON(http.StatusOK, gin.H{"productCategories": Mappers.ToProductCategoryDTOs(productCategories)})
 }
 
+// GET: ./details/:id
 func (p *ProductCategoryController) FindByID(ctx *gin.Context) {
 	id, _ :=  strconv.Atoi(ctx.Param("id"))
-	productCategory := p.ProductCategoryService.FindByID(uint(id))
+	productCategory, err := p.ProductCategoryService.FindByID(uint(id))
+
+	// If no product category found, return bad request
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"No category found by this id": id})
+		return
+	}
 	
 	ctx.JSON(http.StatusOK, gin.H{"productCategory": Mappers.ToProductCategoryDTO(productCategory)})
 }
 
+// POST: ./create
 func (p *ProductCategoryController) Create(ctx *gin.Context) {
 	var productCategoryCreateEditDTO DTOs.ProductCategoryCreateEditDTO
 	err := ctx.BindJSON(&productCategoryCreateEditDTO)
 	if err != nil {
-		log.Fatalln(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":  "json decoding : " + err.Error(),
+			"status": http.StatusBadRequest,
+		})
 		return
 	}
 
@@ -46,8 +58,9 @@ func (p *ProductCategoryController) Create(ctx *gin.Context) {
 		return
 	}
 
-	if (productCategoryCreateEditDTO.ProductCategoryName == "") {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Category name is empty": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
+	// Do not allow empty or fully numeric category names
+	if productCategoryCreateEditDTO.ProductCategoryName == "" || iv.IsNumeric(productCategoryCreateEditDTO.ProductCategoryName) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category name isn't valid": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
 		return
 	}
 
@@ -56,12 +69,24 @@ func (p *ProductCategoryController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"Category created": createdProductCategory.ProductCategoryName})
 }
 
+// PUT: ./edit/:id
 func (p *ProductCategoryController) Update(ctx *gin.Context) {
 	var productCategoryCreateEditDTO DTOs.ProductCategoryCreateEditDTO
 	err := ctx.BindJSON(&productCategoryCreateEditDTO)
 	if err != nil {
-		log.Fatalln(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":  "json decoding : " + err.Error(),
+			"status": http.StatusBadRequest,
+		})
+		return
+	}
+
+	id, _ :=  strconv.Atoi(ctx.Param("id"))
+	productCategory, err := p.ProductCategoryService.FindByID(uint(id))
+
+	// If no product category found, return bad request
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"No category found by this id": id})
 		return
 	}
 
@@ -71,10 +96,9 @@ func (p *ProductCategoryController) Update(ctx *gin.Context) {
 		return
 	}
 
-	id, _ :=  strconv.Atoi(ctx.Param("id"))
-	productCategory := p.ProductCategoryService.FindByID(uint(id))
-	if productCategory.ProductCategoryName == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Category name is empty": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
+	// Do not allow empty or fully numeric category names
+	if productCategoryCreateEditDTO.ProductCategoryName == "" || iv.IsNumeric(productCategoryCreateEditDTO.ProductCategoryName) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Category name is invalid": productCategoryCreateEditDTO.ProductCategoryName, "Created": false})
 		return
 	}
 
@@ -84,12 +108,21 @@ func (p *ProductCategoryController) Update(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
+// DELETE: ./delete/:id
 func (p *ProductCategoryController) Delete(ctx *gin.Context) {
 	id, _ :=  strconv.Atoi(ctx.Param("id"))
-	productCategory := p.ProductCategoryService.FindByID(uint(id))
-	if productCategory.ProductCategoryName == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Category id doesn't exist": id, "Deleted": false})
+	productCategory, err := p.ProductCategoryService.FindByID(uint(id))
+
+	// If no product category found, return bad request
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"No category found by this id": id, "Deleted": false})
 		return
+	}
+
+	// Delete products that belong to the category
+	products := p.ProductService.FindByCategoryId(uint(id))
+	for i := 0; i < len(products); i++ {
+		p.ProductService.Delete(products[i])
 	}
 
 	p.ProductCategoryService.Delete(productCategory)

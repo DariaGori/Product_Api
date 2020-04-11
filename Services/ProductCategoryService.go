@@ -17,7 +17,7 @@ func (p *ProductCategoryService) FindAll() []Models.ProductCategory {
 	return p.ProductCategoryRepository.FindAll()
 }
 
-func (p *ProductCategoryService) FindByID(id uint) Models.ProductCategory {
+func (p *ProductCategoryService) FindByID(id uint) (Models.ProductCategory, error) {
 	return p.ProductCategoryRepository.FindByID(id)
 }
 

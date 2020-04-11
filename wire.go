@@ -11,13 +11,13 @@ import (
 )
 
 func InitProductController(db *gorm.DB) Controllers.ProductController {
-	wire.Build(Repositories.ProvideProductRepostiory, Services.ProvideProductService, Controllers.ProvideProductController)
+	wire.Build(Repositories.ProvideProductRepostiory, Repositories.ProvideProductCategoryRepostiory, Services.ProvideProductService, Services.ProvideProductCategoryService, Controllers.ProvideProductController)
 
 	return Controllers.ProductController{}
 }
 
 func InitProductCategoryController(db *gorm.DB) Controllers.ProductCategoryController {
-	wire.Build(Repositories.ProvideProductCategoryRepostiory, Services.ProvideProductCategoryService, Controllers.ProvideProductCategoryController)
+	wire.Build(Repositories.ProvideProductRepostiory, Repositories.ProvideProductCategoryRepostiory, Services.ProvideProductService, Services.ProvideProductCategoryService, Controllers.ProvideProductCategoryController)
 
 	return Controllers.ProductCategoryController{}
 }

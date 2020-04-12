@@ -1,7 +1,6 @@
 package Repositories
 
 import (
-	"time"
 	"github.com/DariaGori/Product_Api/Models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -57,8 +56,7 @@ func (p *ProductRepository) Delete(product Models.Product) {
 // Check if product with the name provided exists and isn't deleted by current time
 func (p *ProductRepository) Exists(newProduct Models.Product) bool {
 	var product Models.Product
-	query := p.DB.Where("products.product_name = ?", newProduct.ProductName)
-	if err := query.Where("products.deleted_at IS NULL OR products.deleted_at > ?", time.Now()).First(&product).Error; err != nil {
+	if err := p.DB.Where("products.product_name = ?", newProduct.ProductName).First(&product).Error; err != nil {
 		return false
 	}
 	return true

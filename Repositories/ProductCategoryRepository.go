@@ -1,7 +1,6 @@
 package Repositories
 
 import (
-	"time"
 	"github.com/DariaGori/Product_Api/Models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -61,17 +60,6 @@ func (p *ProductCategoryRepository) Exists(newCategory Models.ProductCategory) b
 		return false
 	}
 
-	if p.IsDeleted(productCategory) { return false }
-
 	return true
-}
-
-// Check if category is deleted by current time
-func (p *ProductCategoryRepository) IsDeleted(category Models.ProductCategory) bool {
-	query := p.DB.Where("product_categories.product_category_name = ?", category.ProductCategoryName)
-	if err := query.Where("product_categories.deleted_at IS NULL OR product_categories.deleted_at > ?", time.Now()).First(&category).Error; err != nil {
-		return true
-	}
-	return false
 }
 

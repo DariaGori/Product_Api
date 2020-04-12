@@ -106,7 +106,7 @@ func (p *ProductController) Update(ctx *gin.Context) {
 	}
 
 	// Check if product with this name exists
-	if p.ProductService.Exists(product) {
+	if p.ProductService.Exists(Mappers.ToProduct(productDTO)) {
 		ctx.JSON(http.StatusConflict, gin.H{"Feedback":"Product name already exists: " + productDTO.ProductName + ". Product isn't updated", "Status": http.StatusConflict})
 		return
 	}
